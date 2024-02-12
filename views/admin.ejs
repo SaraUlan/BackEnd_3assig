@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-img-top {
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .card-footer {
+            background-color: #f8f9fa;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .btn {
+            border-radius: 5px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #bd2130;
+            border-color: #bd2130;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <a class="navbar-brand" href="/">News&Events</a>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <% categories.forEach(category=> { %>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/articles/<%= category._id %>">
+                                <%= category.name %>
+                            </a>
+                        </li>
+                        <% }); %>
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="/forecast">Weather forecast</a>
+                            </li>
+                </ul>
+            </div>
+            <ul class="navbar-nav">
+                <% if (user) { %>
+                    <li class="nav-item">
+                        <span class="nav-link">Welcome, <%= user.username %></span>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-danger" id="logoutbutton">Logout</button>
+                    </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup">Signup</a>
+                        </li>
+                        <% } %>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container mt-4">
+        <h2>Welcome to the Admin Panel</h2>
+        <div class="container">
+            <h2>Articles</h2>
+            <button id="addArticleButton" class="btn btn-primary w-100 mb-4" data-toggle="modal"
+                data-target="#addArticleModal">Add Article</button>
+                <div class="modal fade " id="addArticleModal" tabindex="-1"
+                    aria-labelledby="addArticleModal" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Add article
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="POST">
+                                    <div class="form-group">
+                                        <label for="title">Title:</label>
+                                        <input type="text" id="addtitle" name="title" class="form-control" placeholder="Enter article title" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="title">Author:</label>
+                                        <input type="text" name="author" id="addauthor" class="form-control" placeholder="Enter article author" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="title">Category:</label>
+                                        <select name="category" id="addcategory" class="form-control" required>
+                                            <% categories.forEach(category=> { %>
+                                                <option value="<%= category._id %>">
+                                                    <%= category.name %>
+                                                </option>
+                                                <% }); %>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="content">Content:</label>
+                                        <textarea class="form-control" name="content" id="addcontent"
+                                            placeholder="Enter content" required></textarea>
+                                    </div>
+
+                                </form>
+                                <div id="messages">
+
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-success btn-add" id="updateBtn">Add article</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="row" id="allarticles">
+                <% articles.forEach(function(article, index) { %>
+                    <div class="col-md-4 mb-3 arti" id="card<%= article._id%>">
+                        <div class="card h-100">
+                            <img src="<%= article.cover %>" class="card-img-top" alt="Article Image">
+                            <div class="card-body">
+                                <h5 class="card-title mb-3" id="title<%= article._id%>">
+                                    <%= article.title %>
+                                </h5>
+                                <p class="card-text"><strong>Author:</strong>
+                                    <span id="author<%= article._id%>"><%= article.author %></span>
+                                </p>
+                                <p class="card-text"><strong>Category:</strong>
+                                    <span id="category<%= article.category %>"><%= article.category.name %></span>
+                                </p>
+                            </div>
+                            <div class="card-footer">
+                                <button id="updateButton<%= index %>" class="btn btn-primary w-100" data-toggle="modal"
+                                    data-target="#updateModal<%=index%>">Update</button>
+                                <button class="btn btn-danger btn-block mt-2 btn-delete"
+                                    value="<%= article._id %>">Delete</button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade " id="updateModal<%=index%>" tabindex="-1"
+                        aria-labelledby="updateModal<%=index%>" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Update article <%=article.title%>
+                                    </h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="POST">
+                                        <div class="form-group">
+                                            <label for="title">Title:</label>
+                                            <input type="text" id="titled<%= article._id%>" name="title" class="form-control" placeholder="Enter New title name"
+                                                value="<%= article.title %>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="title">Author:</label>
+                                            <input type="text" name="author" id="authord<%= article._id%>" class="form-control" placeholder="Enter title author"
+                                                value="<%= article.author %>">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="title">Category:</label>
+                                            <select name="category" id="categoryd<%= article._id%>" class="form-control">
+                                                <% categories.forEach(category=> { %>
+                                                    <option value="<%= category._id %>">
+                                                        <%= category.name %>
+                                                    </option>
+                                                    <% }); %>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="content">Content:</label>
+                                            <textarea class="form-control" name="content" id="contentd<%= article._id%>"
+                                                placeholder="Enter content"><%= article.content %></textarea>
+                                        </div>
+
+                                    </form>
+                                    <div id="messages">
+
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-success btn-update" id="updateBtn"
+                                        value="<%= article._id %>">Save changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <% }); %>
+            </div>
+        </div>
+    </div>
+    <footer class="text-center bg-body-tertiary mt-auto">
+        <div class="text-center p-3 bg-secondary">
+            ©2024 Ulan Sara SE-2203
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/admin.js"></script>
+    <script type="text/javascript" src="/logout.js"></script>
+</body>
+
+</html>;

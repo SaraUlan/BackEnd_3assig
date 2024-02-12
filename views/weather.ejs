@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Website</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+          background-color: #f8f9fa;
+        }
+        .container {
+          max-width: 800px;
+        }
+        .card {
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .input-group {
+          width: 100%;
+        }
+        #weatherInfo {
+          margin-top: 20px;
+          padding: 20px;
+        }
+        #weatherHistory {
+          margin-top: 30px;
+        }
+        .weather-history-card {
+          background-color: #f8f9fa;
+          border-radius: 10px;
+          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+          margin-bottom: 20px;
+        }
+      </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-secondary">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+                <a class="navbar-brand" href="/">News&Events</a>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <% categories.forEach(category => { %>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/articles/<%= category._id %>"><%= category.name %></a>
+                        </li>
+                        <% }); %>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="/forecast">Weather forecast</a>
+                        </li>
+                </ul>
+            </div>
+            <ul class="navbar-nav">
+                <% if (user) { %>
+                    <li class="nav-item">
+                        <span class="nav-link">Welcome, <%= user.username %></span>
+                    </li>
+                    <li class="nav-item">
+                        <button type="button" class="btn btn-danger" id="logoutbutton">Logout</button>
+                    </li>
+                    <% } else { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signup">Signup</a>
+                        </li>
+                        <% } %>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="mt-5">
+          <h1 class="mb-4 text-center">Weather</h1>
+          <div class="input-group mb-3">
+            <input type="text" id="cityInput" class="form-control" placeholder="Enter city name">
+            <div class="input-group-append">
+              <button class="btn btn-primary" id="getWeatherBtn">Get Weather</button>
+            </div>
+          </div>
+          <div id="weatherInfo" class="card">
+          </div>
+      
+      
+          <h2 class="text-center mb-4">Weather History</h2>
+          <div id="weatherHistory" class="row justify-content-center">
+          </div>
+        </div>
+      </main>
+
+      <footer class="text-center bg-body-tertiary mt-auto">
+        <div class="text-center p-3 bg-secondary">
+            ©2024 Ulan Sara SE-2203
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/logout.js"></script>
+    <script type="text/javascript" src="/weather.js"></script>
+</body>
+
+</html>
